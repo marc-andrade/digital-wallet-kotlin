@@ -1,4 +1,4 @@
--- db/migration/V1__create_outbox_table.sql
+-- db/migration/V2__create_outbox_table.sql
 CREATE TABLE outbox (
                         event_id CHAR(36) NOT NULL PRIMARY KEY,
                         name VARCHAR(255) NOT NULL,
