@@ -1,7 +1,7 @@
-package com.digitalwallet.application.domain.models
+package com.digitalwallet.transaction.application.domain.models
 
-import com.digitalwallet.application.domain.enums.TransactionStatus
-import com.digitalwallet.application.domain.enums.TransactionType
+import com.digitalwallet.transaction.application.domain.enums.TransactionStatus
+import com.digitalwallet.transaction.application.domain.enums.TransactionType
 import java.math.BigDecimal
 import java.time.LocalDateTime
 import java.util.*

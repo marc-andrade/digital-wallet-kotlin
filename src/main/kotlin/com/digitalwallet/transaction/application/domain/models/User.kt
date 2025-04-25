@@ -1,4 +1,4 @@
-package com.digitalwallet.application.domain.models
+package com.digitalwallet.transaction.application.domain.models
 
 import java.util.UUID
 

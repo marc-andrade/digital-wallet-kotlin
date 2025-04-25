@@ -24,11 +24,16 @@ dependencies {
     implementation("io.quarkiverse.amazonservices:quarkus-amazon-s3")
     implementation("io.quarkus:quarkus-jdbc-mysql")
     implementation("io.quarkiverse.amazonservices:quarkus-amazon-sqs")
-    implementation("io.quarkus:quarkus-hibernate-validator")
     implementation("io.quarkus:quarkus-smallrye-openapi")
     implementation("io.quarkus:quarkus-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("io.quarkus:quarkus-arc")
+    implementation("io.quarkus:quarkus-hibernate-validator")
+    implementation("io.quarkus:quarkus-flyway")
+    implementation("io.quarkus:quarkus-reactive-mysql-client")
+    implementation("io.quarkus:quarkus-vertx")
+    implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
 }
@@ -46,8 +51,6 @@ tasks.withType<Test> {
 }
 allOpen {
     annotation("jakarta.ws.rs.Path")
-    annotation("jakarta.enterprise.context.ApplicationScoped")
-    annotation("jakarta.persistence.Entity")
     annotation("io.quarkus.test.junit.QuarkusTest")
 }
 

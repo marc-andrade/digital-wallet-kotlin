@@ -1,4 +1,4 @@
-package com.digitalwallet.application.domain.models
+package com.digitalwallet.transaction.application.domain.models
 
 import java.math.BigDecimal
 import java.time.LocalDateTime

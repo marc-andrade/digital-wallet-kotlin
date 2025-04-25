@@ -1,4 +1,4 @@
-package com.digitalwallet.application.commands
+package com.digitalwallet.transaction.application.commands
 
 import java.math.BigDecimal
 import java.util.UUID
