@@ -3,8 +3,10 @@ package com.digitalwallet.auth.application.handlers
 import com.digitalwallet.auth.application.commands.RegisterUserCommand
 import com.digitalwallet.auth.application.ports.inbound.CommandHandler
 import com.digitalwallet.auth.application.ports.outbound.Users
+import com.digitalwallet.auth.domain.exceptions.UserAlreadyExistsException
 import com.digitalwallet.auth.domain.models.User
 import jakarta.inject.Singleton
+import org.mindrot.jbcrypt.BCrypt
 import java.time.LocalDateTime
 import java.util.*
 
@@ -15,17 +17,18 @@ class RegisterUserHandler(private val users: Users) : CommandHandler<RegisterUse
 
         val existing = users.findByEmail(command.email)
         if (existing != null) {
-            throw IllegalArgumentException("Email already registered")
+            throw UserAlreadyExistsException("Email already registered")
         }
 
         val user = User(
             id = UUID.randomUUID(),
             email = command.email,
             username = command.username,
-            password = command.password,
+            password = BCrypt.hashpw(command.password, BCrypt.gensalt()),
             createdAt = LocalDateTime.now()
         )
 
-        users.save(user)
+        val event = user.registered()
+        users.save(event)
     }
 }

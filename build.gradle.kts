@@ -34,6 +34,7 @@ dependencies {
     implementation("io.quarkus:quarkus-vertx")
     implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("org.mindrot:jbcrypt:0.4")
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
 }

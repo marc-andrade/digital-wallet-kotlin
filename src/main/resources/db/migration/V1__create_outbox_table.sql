@@ -1,0 +1,11 @@
+-- db/migration/V1__create_outbox_table.sql
+CREATE TABLE outbox (
+                        event_id CHAR(36) NOT NULL PRIMARY KEY,
+                        name VARCHAR(255) NOT NULL,
+                        status VARCHAR(50),
+                        payload TEXT NOT NULL,
+                        created_at DATETIME NOT NULL,
+                        aggregate_id CHAR(36) NOT NULL,
+                        aggregate_name VARCHAR(255) NOT NULL,
+                        aggregate_snapshot TEXT NOT NULL
+);
