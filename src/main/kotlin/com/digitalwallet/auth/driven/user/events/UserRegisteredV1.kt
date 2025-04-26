@@ -8,7 +8,7 @@ import java.time.Instant
 
 data class UserRegisteredV1(private val event: UserRegistered) : UserEventV1 {
 
-    override val id = event.id.value
+    override val id = event.eventId
     override val name = "UserRegistered"
     override val status = OutboxStatus.PENDING
     override val timestamp: Instant = event.instant

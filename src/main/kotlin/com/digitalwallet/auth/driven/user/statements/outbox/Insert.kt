@@ -22,7 +22,7 @@ class Insert(val event: UserEventV1) : Statement {
             aggregate_id,
             aggregate_name,
             aggregate_snapshot
-            ) VALUES (?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     """
 
     override fun arguments(): Tuple = listOf(

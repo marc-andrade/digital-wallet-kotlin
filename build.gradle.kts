@@ -14,27 +14,45 @@ val quarkusPlatformArtifactId: String by project
 val quarkusPlatformVersion: String by project
 
 dependencies {
+    // Quarkus Platform BOMs
     implementation(enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}"))
     implementation(enforcedPlatform("${quarkusPlatformGroupId}:quarkus-amazon-services-bom:${quarkusPlatformVersion}"))
-    implementation("io.quarkus:quarkus-kafka-client")
-    implementation("io.quarkus:quarkus-messaging-kafka")
+
+    // Quarkus Core & Web
+    implementation("io.quarkus:quarkus-arc")
     implementation("io.quarkus:quarkus-resteasy-reactive")
-    implementation("io.quarkiverse.amazonservices:quarkus-amazon-sns")
-    implementation("io.quarkus:quarkus-smallrye-jwt")
-    implementation("io.quarkiverse.amazonservices:quarkus-amazon-s3")
-    implementation("io.quarkus:quarkus-jdbc-mysql")
-    implementation("io.quarkiverse.amazonservices:quarkus-amazon-sqs")
+    implementation("io.quarkus:quarkus-resteasy-reactive-jackson") // Includes Jackson Core
+    implementation("io.quarkus:quarkus-vertx")
     implementation("io.quarkus:quarkus-smallrye-openapi")
+
+    // Kotlin Support
     implementation("io.quarkus:quarkus-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("io.quarkus:quarkus-arc")
-    implementation("io.quarkus:quarkus-hibernate-validator")
-    implementation("io.quarkus:quarkus-flyway")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin") // Jackson Kotlin Module
+
+    // Jackson Datatype JSR310 (for Java 8 Date/Time)
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
+
+    // Messaging & Kafka
+    implementation("io.quarkus:quarkus-kafka-client")
+    implementation("io.quarkus:quarkus-messaging-kafka")
+
+    // AWS Services
+    implementation("io.quarkiverse.amazonservices:quarkus-amazon-sns")
+    implementation("io.quarkiverse.amazonservices:quarkus-amazon-s3")
+    implementation("io.quarkiverse.amazonservices:quarkus-amazon-sqs")
+
+    // Security
+    implementation("io.quarkus:quarkus-smallrye-jwt")
+    implementation("org.mindrot:jbcrypt:0.4") // Password Hashing
+
+    // Database & Persistence
+    implementation("io.quarkus:quarkus-jdbc-mysql")
     implementation("io.quarkus:quarkus-reactive-mysql-client")
-    implementation("io.quarkus:quarkus-vertx")
-    implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.mindrot:jbcrypt:0.4")
+    implementation("io.quarkus:quarkus-flyway") // Database Migrations
+    implementation("io.quarkus:quarkus-hibernate-validator") // Bean Validation
+
+    // Testing
     testImplementation("io.quarkus:quarkus-junit5")
     testImplementation("io.rest-assured:rest-assured")
 }
@@ -61,4 +79,3 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         freeCompilerArgs.add("-Xjava-parameters")
     }
 }
-

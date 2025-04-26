@@ -11,9 +11,12 @@ import io.vertx.mutiny.mysqlclient.MySQLPool
 import io.vertx.mutiny.sqlclient.Tuple
 import jakarta.inject.Singleton
 import java.util.*
+import org.jboss.logging.Logger
 
 @Singleton
 class Adapter(private val pool: MySQLPool) : Users {
+
+    private val log: Logger = Logger.getLogger(Adapter::class.java)
 
     override suspend fun findByEmail(email: String): User? =
         pool.preparedQuery(FIND_BY_EMAIL)
@@ -38,8 +41,10 @@ class Adapter(private val pool: MySQLPool) : Users {
                 }
             ).andFailFast()
         }.onItem().transformToUni { _ ->
+            log.infof("Transação bem-sucedida para evento %s. Atualizando outbox para SUCCESS.", event.eventId)
             updateStatusReactive(event.eventId, OutboxStatus.SUCCESS)
-        }.onFailure().recoverWithUni { _ ->
+        }.onFailure().recoverWithUni { throwable ->
+            log.errorf(throwable, "Falha na transação para o evento %s. Atualizando outbox para FAILED.", event.eventId)
             updateStatusReactive(event.eventId, OutboxStatus.FAILED)
         }.awaitSuspending()
     }

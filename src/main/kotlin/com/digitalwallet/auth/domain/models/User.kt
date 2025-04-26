@@ -13,7 +13,6 @@ data class User(
 ) {
     fun registered(): UserRegistered {
         return UserRegistered(
-            id = UserId(id),
             user = this
         )
     }

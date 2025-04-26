@@ -18,9 +18,8 @@ data class AggregateV1(val user: User) {
                 "email" to user.email,
                 "username" to user.username,
                 "password" to user.password,
-                "createdAt" to user.createdAt
+                "createdAt" to user.createdAt.toString()
             )
         )
-
     }
 }

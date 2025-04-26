@@ -12,7 +12,7 @@ class Insert(val event: UserRegistered) : Statement {
     """
 
     override fun arguments(): Tuple = Tuple.of(
-        event.id.value,
+        event.eventId,
         event.user.username,
         event.user.email,
         event.user.password,
