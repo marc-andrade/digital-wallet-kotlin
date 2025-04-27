@@ -21,14 +21,16 @@ dependencies {
     // Quarkus Core & Web
     implementation("io.quarkus:quarkus-arc")
     implementation("io.quarkus:quarkus-resteasy-reactive")
-    implementation("io.quarkus:quarkus-resteasy-reactive-jackson") // Includes Jackson Core
+    implementation("io.quarkus:quarkus-resteasy-reactive-jackson")
     implementation("io.quarkus:quarkus-vertx")
     implementation("io.quarkus:quarkus-smallrye-openapi")
 
     // Kotlin Support
     implementation("io.quarkus:quarkus-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin") // Jackson Kotlin Module
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("io.quarkus:quarkus-scheduler")
+    implementation("io.quarkus:quarkus-jackson")
 
     // Jackson Datatype JSR310 (for Java 8 Date/Time)
     implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310")
@@ -44,13 +46,13 @@ dependencies {
 
     // Security
     implementation("io.quarkus:quarkus-smallrye-jwt")
-    implementation("org.mindrot:jbcrypt:0.4") // Password Hashing
+    implementation("org.mindrot:jbcrypt:0.4")
 
     // Database & Persistence
     implementation("io.quarkus:quarkus-jdbc-mysql")
     implementation("io.quarkus:quarkus-reactive-mysql-client")
-    implementation("io.quarkus:quarkus-flyway") // Database Migrations
-    implementation("io.quarkus:quarkus-hibernate-validator") // Bean Validation
+    implementation("io.quarkus:quarkus-flyway")
+    implementation("io.quarkus:quarkus-hibernate-validator")
 
     // Testing
     testImplementation("io.quarkus:quarkus-junit5")
