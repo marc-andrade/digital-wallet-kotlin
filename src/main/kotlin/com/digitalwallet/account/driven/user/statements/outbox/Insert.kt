@@ -16,19 +16,17 @@ class Insert(val event: UserEventV1) : Statement {
          INSERT INTO outbox (
             event_id, 
             name, 
-            status, 
             payload, 
             created_at,
             aggregate_id,
             aggregate_name,
             aggregate_snapshot
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
     """
 
     override fun arguments(): Tuple = listOf(
         event.id,
         event.name,
-        event.status.name,
         event.payload,
         event.timestamp.toLocalDateTime(),
         event.aggregate.user.id,

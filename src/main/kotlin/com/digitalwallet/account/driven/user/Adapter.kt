@@ -4,14 +4,13 @@ import com.digitalwallet.account.application.ports.outbound.Users
 import com.digitalwallet.account.domain.events.UserEvent
 import com.digitalwallet.account.domain.models.User
 import com.digitalwallet.account.driven.user.builders.statements
-import com.digitalwallet.account.domain.enums.OutboxStatus
 import io.smallrye.mutiny.Uni
 import io.smallrye.mutiny.coroutines.awaitSuspending
 import io.vertx.mutiny.mysqlclient.MySQLPool
 import io.vertx.mutiny.sqlclient.Tuple
 import jakarta.inject.Singleton
-import java.util.*
 import org.jboss.logging.Logger
+import java.util.*
 
 @Singleton
 class Adapter(private val pool: MySQLPool) : Users {
@@ -34,24 +33,16 @@ class Adapter(private val pool: MySQLPool) : Users {
             }
 
     override suspend fun save(event: UserEvent) {
-        pool.withTransaction { connection ->
-            Uni.join().all(
-                event.statements().map {
-                    connection.preparedQuery(it.template).execute(it.arguments())
-                }
-            ).andFailFast()
-        }.onItem().transformToUni { _ ->
-            log.infof("Transação bem-sucedida para evento %s. Atualizando outbox para SUCCESS.", event.eventId)
-            updateStatusReactive(event.eventId, OutboxStatus.SUCCESS)
-        }.onFailure().recoverWithUni { throwable ->
-            log.errorf(throwable, "Falha na transação para o evento %s. Atualizando outbox para FAILED.", event.eventId)
-            updateStatusReactive(event.eventId, OutboxStatus.FAILED)
-        }.awaitSuspending()
-    }
-
-    private fun updateStatusReactive(eventId: UUID, status: OutboxStatus): Uni<Void> {
-        return pool.preparedQuery(UPDATE_OUTBOX_STATUS)
-            .execute(Tuple.of(status.name, eventId))
-            .replaceWithVoid()
+        try {
+            pool.withTransaction { connection ->
+                Uni.join().all(
+                    event.statements().map {
+                        connection.preparedQuery(it.template).execute(it.arguments())
+                    }
+                ).andFailFast()
+            }.awaitSuspending()
+        } catch (e: Exception) {
+            log.errorf(e, "Falha ao salvar evento para o e-mail %s: %s", event.user.email, e.message)
+        }
     }
 }

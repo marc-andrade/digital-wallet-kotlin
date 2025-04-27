@@ -1,6 +1,6 @@
 package com.digitalwallet.account.driven.messaging.outbox.producer
 
-import com.digitalwallet.account.domain.enums.OutboxStatus
+import com.digitalwallet.account.driven.messaging.outbox.producer.dto.OutboxEventInfo
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.quarkus.scheduler.Scheduled
@@ -12,7 +12,7 @@ import jakarta.enterprise.context.ApplicationScoped
 import org.eclipse.microprofile.reactive.messaging.Channel
 import org.eclipse.microprofile.reactive.messaging.Emitter
 import org.jboss.logging.Logger
-import java.util.UUID
+import java.util.*
 
 @ApplicationScoped
 class Adapter(
@@ -38,7 +38,7 @@ class Adapter(
 
     private fun findAndLockEvents(): Uni<List<OutboxEventInfo>> {
         return pool.preparedQuery(SELECT_SUCCESS_EVENTS)
-            .execute(Tuple.of(OutboxStatus.SUCCESS.name, batchSize))
+            .execute(Tuple.of(batchSize))
             .onItem().transform { rowSet ->
                 rowSet.map { row ->
                     OutboxEventInfo(
@@ -50,42 +50,35 @@ class Adapter(
             }
     }
 
+    private fun markEventAsPublished(eventId: UUID): Uni<Void> {
+        return pool.preparedQuery(UPDATE_EVENT_PUBLISHED)
+            .execute(Tuple.of(eventId.toString()))
+            .replaceWithVoid()
+    }
+
     private fun processEvent(event: OutboxEventInfo): Uni<Void> {
         val payloadData: Map<String, String> = try {
             objectMapper.readValue(event.payload)
         } catch (e: Exception) {
-            log.errorf(e, "Payload inválido para evento %s", event.id)
-            return updateStatus(event.id, OutboxStatus.FAILED)
+            log.errorf(e, "Payload inválido para evento (event_id: %s): %s", event.id, e.message)
+            return Uni.createFrom().voidItem()
         }
         val email = payloadData["email"]
-        val username = payloadData["user"]
         if (email == null) {
-            log.errorf("Email não encontrado no payload do evento %s. Marcando como FAILED.", event.id)
-            return updateStatus(event.id, OutboxStatus.FAILED)
+            log.errorf("Email não encontrado no payload do evento (event_id: %s).", event.id)
+            return Uni.createFrom().voidItem()
         }
         val kafkaMessage = objectMapper.writeValueAsString(
             mapOf(
                 "eventId" to event.id.toString(),
                 "aggregateId" to event.aggregateId.toString(),
-                "email" to email,
-                "username" to username
+                "email" to email
             )
         )
-        return updateStatus(event.id, OutboxStatus.PROCESSING)
-            .chain { _: Void? ->
-                Uni.createFrom().completionStage(confirmationRequestEmitter.send(kafkaMessage))
-                    .onItem().invoke { _: Void? -> log.infof("Evento %s publicado no Kafka.", event.id) }
-                    .onFailure().call { err: Throwable ->
-                        log.errorf(err, "Falha ao publicar evento %s no Kafka.", event.id)
-                        updateStatus(event.id, OutboxStatus.FAILED)
-                    }
-                    .replaceWithVoid()
-            }
-    }
-
-    private fun updateStatus(eventId: UUID, status: OutboxStatus): Uni<Void> {
-        return pool.preparedQuery(UPDATE_STATUS)
-            .execute(Tuple.of(status.name, eventId))
+        return Uni.createFrom().completionStage(confirmationRequestEmitter.send(kafkaMessage))
+            .onItem().invoke { _: Void? -> log.infof("Evento publicado no Kafka para o e-mail %s (event_id: %s).", email, event.id) }
+            .onFailure().invoke { err: Throwable -> log.errorf(err, "Falha ao publicar evento para o e-mail %s (event_id: %s): %s", email, event.id, err.message) }
             .replaceWithVoid()
+            .chain { -> markEventAsPublished(event.id) }
     }
 }

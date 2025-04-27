@@ -1,4 +1,4 @@
-package com.digitalwallet.account.driven.messaging.outbox.producer
+package com.digitalwallet.account.driven.messaging.outbox.producer.dto
 
 import java.util.*
 
