@@ -43,6 +43,8 @@ dependencies {
     implementation("io.quarkiverse.amazonservices:quarkus-amazon-sns")
     implementation("io.quarkiverse.amazonservices:quarkus-amazon-s3")
     implementation("io.quarkiverse.amazonservices:quarkus-amazon-sqs")
+    implementation("io.quarkiverse.amazonservices:quarkus-amazon-ses")
+    implementation("software.amazon.awssdk:url-connection-client")
 
     // Security
     implementation("io.quarkus:quarkus-smallrye-jwt")

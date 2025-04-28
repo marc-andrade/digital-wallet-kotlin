@@ -1,6 +1,6 @@
-package com.digitalwallet.account.driven.messaging.outbox.producer
+package com.digitalwallet.account.driven.user.messaging.register.producer
 
-import com.digitalwallet.account.driven.messaging.outbox.producer.dto.OutboxEventInfo
+import com.digitalwallet.account.driven.user.messaging.register.producer.dto.OutboxEventInfo
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import io.quarkus.scheduler.Scheduled

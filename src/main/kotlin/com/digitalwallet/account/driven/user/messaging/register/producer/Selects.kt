@@ -1,4 +1,4 @@
-package com.digitalwallet.account.driven.messaging.outbox.producer
+package com.digitalwallet.account.driven.user.messaging.register.producer
 
 const val SELECT_SUCCESS_EVENTS = """
     SELECT event_id, aggregate_id, payload
